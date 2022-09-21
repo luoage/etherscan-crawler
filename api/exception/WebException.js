@@ -13,4 +13,4 @@ module.exports = class extends Error {
   getCode() {
     return this.code;
   }
-}
+};

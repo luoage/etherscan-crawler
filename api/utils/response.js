@@ -1,4 +1,3 @@
-
 const response = (res, data) => {
   const json = {
     code: 0,
@@ -13,4 +12,4 @@ const response = (res, data) => {
 
 module.exports = {
   response,
-}
+};

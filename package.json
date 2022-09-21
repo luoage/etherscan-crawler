@@ -4,6 +4,7 @@
   "description": "",
   "main": "api/index.js",
   "scripts": {
+    "test": "node api/test/etherscanServiceTest.js",
     "lint": "eslint api --ext .mjs,.js,.jsx,.ts,.tsx",
     "lint:fix": "npm run lint -- --fix",
     "dev": "blocklet dev",
