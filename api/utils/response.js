@@ -6,7 +6,7 @@ const response = (res, data) => {
     result: data,
   };
 
-  console.log('api response ', JSON.stringify(json));
+  // console.log('api response ', JSON.stringify(json));
 
   res.json(json);
 };

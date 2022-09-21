@@ -5,7 +5,8 @@ const { Joi, validate } = require('../utils/validate');
 const { get } = require('../utils/request');
 const { zipObject } = require('../utils/util');
 const { response } = require('../utils/response');
-const { baseEth } = require('../settings/config');
+const { baseEth, cacheMillisecond } = require('../settings/config');
+const { getCacheTime, isCached, getCache, setCache } = require('../data/cache');
 
 
 const getTransactions = async (req, res) => {
@@ -19,17 +20,33 @@ const getTransactions = async (req, res) => {
 
   const page = parseInt(query.page) || 1;
   const perpage = parseInt(query.perpage) || 10;
+  const params = { page, perpage, address: query.a };
+  const cacheKey = qs.stringify(params);
 
-  const body = await grabEthWebsite({ page, perpage, address: query.a });
-  const list = (getWebsiteJson(body) || []).filter((item) => {
-    return Object.keys(item).length > 0;
-  });
+  console.log('generate cache key', cacheKey);
+
+  console.log(isCached(cacheKey), getCacheTime(cacheKey) + cacheMillisecond, new Date().getTime());
+
+  let transactions = [];
+
+  if (!isCached(cacheKey) || (getCacheTime(cacheKey) + cacheMillisecond < new Date().getTime())) {
+    const body = await grabEthWebsite(params);
+
+    transactions = (getWebsiteJson(body) || []).filter((item) => {
+      return Object.keys(item).length > 0;
+    });
+    setCache(cacheKey, transactions);
+    console.log('get data from origin page');
+  } else {
+    transactions = getCache(cacheKey).data;
+    console.log('get data from cache');
+  }
 
   response(res, {
     page,
     perpage,
-    listLength: list.length,
-    list,
+    listLength: transactions.length,
+    list: transactions,
   });
 };
 
