@@ -25,15 +25,13 @@ const getTransactions = async (req, res) => {
 
   console.log('generate cache key', cacheKey);
 
-  console.log(isCached(cacheKey), getCacheTime(cacheKey) + cacheMillisecond, new Date().getTime());
-
   let transactions = [];
 
   if (!isCached(cacheKey) || (getCacheTime(cacheKey) + cacheMillisecond < new Date().getTime())) {
     const body = await grabEthWebsite(params);
 
     transactions = (getWebsiteJson(body) || []).filter((item) => {
-      return Object.keys(item).length > 0;
+      return Object.keys(item).length > 0 && item[Object.keys(item)[0]] !== undefined;
     });
     setCache(cacheKey, transactions);
     console.log('get data from origin page');
